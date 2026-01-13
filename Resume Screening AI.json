@@ -1,0 +1,269 @@
+{
+  "name": "Resume Screening AI",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a professional HR resume screening AI.\n\nYour task is to evaluate a candidate's resume against a job role and return a structured assessment.\n\nInstructions (IMPORTANT):\n- Carefully analyze skills, experience, education, and relevance to the job role.\n- Be strict and realistic.\n- Do NOT add extra text.\n- Do NOT add explanations outside JSON.\n- Output MUST be valid JSON only.",
+        "hasOutputParser": true,
+        "messages": {
+          "messageValues": [
+            {
+              "message": " "
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        128,
+        -16
+      ],
+      "id": "1f588d0d-9961-4034-9e84-4846fd3e3831",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4o-mini"
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.3,
+      "position": [
+        200,
+        208
+      ],
+      "id": "d4eed7b1-7237-489e-b057-15a6a78e311e",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "qHuD0BbTGD8opJlv",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4.1-MINI"
+        },
+        "responses": {
+          "values": [
+            {
+              "content": "=Resume Score generater\n\nRequired JSON Output Format:\n{\n  \"score\": 0-100 number,\n  \"decision\": \"Shortlist\" or \"Reject\",\n  \"reason\": \"1-2 line clear explanation\"\n}\n\nScoring Rule:\n- Score >= 80 → \"Shortlist\"\n- Score < 80 → \"Reject\"\n{{ $json.text}}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 2.1,
+      "position": [
+        480,
+        -16
+      ],
+      "id": "8109e885-016f-41a3-94cc-1c8e196254e7",
+      "name": "Score Generate",
+      "credentials": {
+        "openAiApi": {
+          "id": "qHuD0BbTGD8opJlv",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "text",
+        "binaryPropertyName": "upload_file",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        -96,
+        -16
+      ],
+      "id": "eb11c003-12da-4a87-8d38-72e92539cf80",
+      "name": "Extract Binary File to Json File"
+    },
+    {
+      "parameters": {
+        "formTitle": "Resume ",
+        "formDescription": "Job Role",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "upload file",
+              "fieldType": "file"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.3,
+      "position": [
+        -320,
+        -16
+      ],
+      "id": "d617bcaf-e5c0-41ce-9137-2203a021b1f5",
+      "name": "Here Put your Resume",
+      "webhookId": "c80a93a2-2aa1-468b-a99a-3067fa9d24b6"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "9ecb9c1d-4ffe-4c4d-9b52-4023785732f1",
+              "name": "score",
+              "value": "=\n{{ $json.output[0].content[0].text.match(/\\d+/)[0] }}\n",
+              "type": "string"
+            },
+            {
+              "id": "4f266164-a997-43c2-a51f-99a45e71eab2",
+              "name": "decision",
+              "value": "={{ $json.output[0].content[0].text.match(/accept|reject/i)[0] }}\n",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        832,
+        -16
+      ],
+      "id": "7df2e574-c757-4710-9020-5cdd7f229ed7",
+      "name": "Set Score"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "33a46c0c-6202-45f8-a0c3-a845589b45f1",
+              "leftValue": "={{ $json.score }}",
+              "rightValue": 80,
+              "operator": {
+                "type": "number",
+                "operation": "gte"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        1056,
+        -16
+      ],
+      "id": "8ec57fb6-3413-43dc-b370-4501425f7654",
+      "name": "Here Give Conditions"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Score Generate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Score Generate": {
+      "main": [
+        [
+          {
+            "node": "Set Score",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Binary File to Json File": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Here Put your Resume": {
+      "main": [
+        [
+          {
+            "node": "Extract Binary File to Json File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Set Score": {
+      "main": [
+        [
+          {
+            "node": "Here Give Conditions",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "be30feb1-5c4b-4723-b533-d97b081da0fe",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "95de82f4d04283fff491f9a52799435e8ae424d6501c7992c544d25cccd1fcd6"
+  },
+  "id": "tZHed3rAKfRDzgKQ",
+  "tags": []
+}
