@@ -14,7 +14,7 @@ Sends the result forward for decision-making
 
 🧠 How it works
 
-1️⃣ Upload Resume (PDF/Text)
+- 1️⃣ Upload Resume (PDF/Text)
 2️⃣ 📄 Extract text into structured JSON
 3️⃣ 🤖 AI (OpenAI) analyzes skills & experience
 4️⃣ 🏆 LLM generates scoring output
