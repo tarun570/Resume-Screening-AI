@@ -2,37 +2,37 @@
 
 Today I built a workflow that allows you to upload a resume, and the system automatically:
 
-Extracts the resume text
+- Extracts the resume text
 
-Sends it to an AI model
+- Sends it to an AI model
 
-Generates a score
+- Generates a score
 
-Applies evaluation rules
+- Applies evaluation rules
 
-Sends the result forward for decision-making
+- Sends the result forward for decision-making
 
-🧠 How it works
+# 🧠 How it works
 
 - 1️⃣ Upload Resume (PDF/Text)
-2️⃣ 📄 Extract text into structured JSON
-3️⃣ 🤖 AI (OpenAI) analyzes skills & experience
-4️⃣ 🏆 LLM generates scoring output
-5️⃣ ✏️ Score is formatted & categorized
-6️⃣ 🔁 Conditional logic checks score
-7️⃣ ➡️ Pass / Fail branch execution
+- 2️⃣ 📄 Extract text into structured JSON
+- 3️⃣ 🤖 AI (OpenAI) analyzes skills & experience
+- 4️⃣ 🏆 LLM generates scoring output
+- 5️⃣ ✏️ Score is formatted & categorized
+- 6️⃣ 🔁 Conditional logic checks score
+- 7️⃣ ➡️ Pass / Fail branch execution
 
-🎯 Use Cases
+# 🎯 Use Cases
 
-Resume screening
+- Resume screening
 
-Candidate shortlisting
+- Candidate shortlisting
 
-Automated HR filters
+- Automated HR filters
 
-Skill gap detection
+- Skill gap detection
 
-Bulk resume evaluation
+- Bulk resume evaluation
 
 💡 Why this matters
 
